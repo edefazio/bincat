@@ -13,21 +13,21 @@ import bincat.Row;
  * 
  * @author M. Eric DeFazio eric@varcode.io
  */
-public class LongFrame
+public class BitFrame
 {
-    public static LongFrame of( Row row )
+    public static BitFrame of( Row row )
     {
-        return new LongFrame( row );
+        return new BitFrame( row );
     }
     
-    public static LongFrame of( Object...values )
+    public static BitFrame of( Object...values )
     {
-        return new LongFrame( Row.of( values ) ); 
+        return new BitFrame( Row.of( values ) ); 
     }
     
     public final BitField[] bitFields;
     
-    public LongFrame( Row row )
+    public BitFrame( Row row )
     {
         int shift = 0;
         
@@ -60,8 +60,8 @@ public class LongFrame
     public String describe( long row )
     {
         StringBuilder sb = new StringBuilder();
-        String frameBits = Frame.zeroPadToNBits( row & mask(), bitCount() );
-        frameBits = Frame.to64Bit( frameBits, '-' );
+        String frameBits = Align.zeroPadToNBits( row & mask(), bitCount() );
+        frameBits = Align.to64Bit( frameBits, '-' );
         sb.append( frameBits );
         //sb.append( Frame.to64Bit( mask() ).replace(' ', '-') );
         
@@ -81,7 +81,7 @@ public class LongFrame
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append( Frame.to64Bit( mask() ).replace(' ', '-') );
+        sb.append( Align.to64Bit( mask() ).replace(' ', '-') );
         sb.append( " (");
         sb.append( bitCount() );
         sb.append( " of 64-bits)" );

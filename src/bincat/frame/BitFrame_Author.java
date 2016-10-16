@@ -17,7 +17,7 @@ import varcode.markup.codeml.code._Method;
  * 
  * @author M. Eric DeFazio eric@bitc.at
  */
-public class LongFrame_Author
+public class BitFrame_Author
 {   
     public static class Synthesize
         extends _Method
@@ -91,8 +91,8 @@ public class LongFrame_Author
         public static String describeRow( long row )
         {
             StringBuilder sb = new StringBuilder();
-            String frameBits = Frame.zeroPadToNBits( row & mask(), bitCount() );
-            frameBits = Frame.to64Bit( frameBits, '-' );
+            String frameBits = Align.zeroPadToNBits( row & mask(), bitCount() );
+            frameBits = Align.to64Bit( frameBits, '-' );
             sb.append( frameBits );
             sb.append( " (");
             sb.append( bitCount() );
@@ -139,11 +139,11 @@ public class LongFrame_Author
     public static LoadField LOAD_FIELD = new LoadField();
     
     public static _class of( 
-        String packageName, String className, LongFrame longFrame )
+        String packageName, String className, BitFrame longFrame )
     {
         _class c = _class.of( 
             packageName, className + " extends Frame" );
-        c.imports( Frame.class );
+        c.imports( Align.class );
         
         String[] fieldNames = new String[ longFrame.bitFields.length ];
         

@@ -42,9 +42,9 @@ public class BitField
     public String describeFrame( long row )
     {
         long bits = ( row & bitMask64 ) >> shift;
-        String alignedBits = Frame.zeroPadToNBits( bits, field.type.bitCount() );
-        alignedBits = Frame.shiftSpaces( alignedBits, shift );
-        alignedBits = Frame.to64Bit( alignedBits );
+        String alignedBits = Align.zeroPadToNBits( bits, field.type.bitCount() );
+        alignedBits = Align.shiftSpaces( alignedBits, shift );
+        alignedBits = Align.to64Bit( alignedBits );
         long bin = extractBits(row);
         return alignedBits + " " + field.name 
             + "[" + bin + "]->" + field.type.loadObject( bin );
@@ -58,7 +58,7 @@ public class BitField
     @Override
     public String toString()
     {
-        return Frame.to64BitMask( bitMask64 ) + " "+ field.name + field.type;
+        return Align.to64BitMask( bitMask64 ) + " "+ field.name + field.type;
     }
     
     public int bitCount()

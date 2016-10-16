@@ -1,17 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package bincat.frame;
 
 /**
- *
- * @author eric
+ * Aligns Bits within a 64-bit BitFrame
+ * 
+ * @author M. Eric DeFazio eric@varcode.io
  */
-public class Frame
+public class Align
 {
+    /** String of 0 to 64 ' ' (spaces) */
     public static final String[] SPACES = new String[ 65 ];
+    
+    /** String of 0 to 64 '0's (zeros) */
     public static final String[] ZEROS = new String[ 65 ];
     
     static
@@ -25,10 +24,9 @@ public class Frame
         }
     }
                     
-    protected Frame()
+    private Align()
     {        
     }
-        
     
     public static final String shiftSpaces( String binary, int spaces )
     {
@@ -45,7 +43,7 @@ public class Frame
      */
     public static final String to64BitMask( long bitMask )
     {
-        String str = Long.toBinaryString( bitMask ).replace('0', ' ');
+        String str = Long.toBinaryString( bitMask ).replace( '0', ' ');
         return SPACES[ 64 - str.length() ] + str;        
     }
 
@@ -85,29 +83,7 @@ public class Frame
          String str = Long.toBinaryString( binary );
         return to64Bit( str , padChar);
     }
-    
-    public static final String to32Bit( int binary )
-    {
-        String str = Integer.toBinaryString( binary );
-        return to32Bit( str );
-    }
-    
-    public static final String to32Bit( int binary, char padChar )
-    {
-        String str = Integer.toBinaryString( binary );
-        return to32Bit( str, padChar );
-    }
-    
-    public static final String to32Bit( String binary )
-    {
-        return SPACES[ 32 - binary.length() ] + binary;
-    }
-    
-    public static final String to32Bit( String binary, char padChar )
-    {
-        return SPACES[ 32 - binary.length() ].replace( ' ', padChar) + binary;
-    }
-    
+        
     public static final String to64Bit( String binary )
     {
         return SPACES[ 64 - binary.length() ] + binary;

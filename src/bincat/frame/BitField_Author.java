@@ -8,7 +8,6 @@ import varcode.doc.translate.JavaTranslate;
 import varcode.java.Java;
 import varcode.java.JavaNaming;
 import varcode.java.code._class;
-import varcode.java.code._code;
 import varcode.java.code._methods._method;
 import varcode.markup.codeml.code._Method;
 
@@ -34,9 +33,9 @@ public class BitField_Author
                 Character.toUpperCase( name.charAt( 0 ) ) 
                 + name.substring( 1 ) ) );
         
-        c.javadoc( "varcode Authored bitField Class" );
+        c.javadoc( "varcode authored bitField for " );
         c.imports( typeClass );
-        c.imports( Frame.class );
+        c.imports( Align.class );
         
         c.field( "public static final String name = \""+ bitField.field.getName() + "\";" );
         c.field( "public static final int bitCount = "+ bitField.bitCount() + ";" );
@@ -47,30 +46,17 @@ public class BitField_Author
         
         c.field( "64-bit (long) bitmask for the field bits",
             "public static final long bitMask64 = 0b" 
-                + Frame.to64Bit( bitField.bitMask64, '0' ) + "L;" );
+                + Align.to64Bit( bitField.bitMask64, '0' ) + "L;" );
         
         c.method( DESCRIBE_FRAME_ROW.compose( ) );
-        
         c.method( DESCRIBE_FRAME.compose( ) );
-        //c.method("describes the BitField as it is stored in bits of the Frame",
-        //    "public static String describeFrame()",
-        //    _code.of( "return Frame.to64BitMask( bitMask64 ) + \" \" + name + type;" ) );
-        
         c.method( TO_STRING.compose( ) );
-        //c.method("public String toString()",
-        //    "return getClass().getCanonicalName() + \"{\" + type.getClass().getSimpleName() + \"}\";" );    
-        
         c.method( EXTRACT_LONG_BITS.compose( ) );
-        //c.method(
-        //    "public static long extractLongBits( long row )", 
-        //    "return ( row & bitMask64 ) >>> shift;" );
         c.method( SYNTHESIZE.compose( ) );
-        //c.method( "public static long synthesize()",
-        //   "return type.synthesizeBin() << shift;" );
-        c.imports( Frame.class );
+        c.imports( Align.class );
         
-        //build all the Store methods based on the Fields Type Store methods
-        c = buildStoreMethods( c, typeClass );
+        //c = buildStoreMethods( c, typeClass );
+        c = authorStoreMethods( c, typeClass );
         c = buildLoadMethod( c, bitField, typeClass );
         return c;        
     }
@@ -84,10 +70,9 @@ public class BitField_Author
         {
             throw new BinCatException( "Type has more than one load() method" );
         }
+
         java.lang.reflect.Type t = typeLoadMethods.get( 0 ).getGenericReturnType();
-        
-        //make sure to import anythign even generics
-        _bitFieldClass.imports( (Object[])parseClassesFromGenericString( t.toString() ) );
+        _bitFieldClass.imports( (Object[]) Java.classesFromType( t ) );
         
         String loadType = T.translate( t );
         
@@ -95,118 +80,73 @@ public class BitField_Author
         return _bitFieldClass;        
     }
     
-    
     /**
-     * Modifies a (BitField) _class model that contains the appropriate store()
-     * methods...
-     * this includes adding any imports based on the types
-     * @param c the (_BitField) class
-     * @param typeClass the Type class of the field
-     * @return the modified _class (with the store methods and imports)
+     * 
+     * @param c the BitField class being authored
+     * @param typeClass the type (Class) mediating the storage
+     * @return the modified _class
      */
-    public static _class buildStoreMethods( _class c, Class typeClass )
+    public static _class authorStoreMethods( _class c, Class typeClass )
     {
         List<Method> typeStoreMethods = Java.getMethods( typeClass, "store" );
-        
         for( int i = 0; i < typeStoreMethods.size(); i++ )
         {
             Method m = typeStoreMethods.get( i );
-        
-            StringBuilder storeSignature = new StringBuilder();
-            StringBuilder storeBody = new StringBuilder();
-            storeSignature.append( "public static long store( " );
-            storeBody.append( "return type.store(" );
-            
-            java.lang.reflect.Type[] paramTypes = m.getGenericParameterTypes();
-            for( int j = 0; j< paramTypes.length; j++ )
+            java.lang.reflect.Type[] paramTypes = m.getGenericParameterTypes();   
+            for( int j = 0; j < paramTypes.length; j++ )
             {
                 //the class needs to import the parameter types
-                c.imports( 
-                    (Object[]) parseClassesFromGenericString( paramTypes[ j ].toString() ) ); 
-                
-                if( j > 0 )
-                {
-                    storeSignature.append( ", " );
-                    storeBody.append( ", " );
-                }
-                
-                storeSignature.append( T.translate( paramTypes[ j ] ) );
-                storeSignature.append( " value");
-                storeSignature.append( j + 1 );             
-                storeBody.append( " value");
-                storeBody.append( j + 1  );                
+                c.imports( (Object[])Java.classesFromType( paramTypes[ j ] ) );                                                       
             }
-            storeSignature.append( " )" );
-            storeBody.append( " ) << shift;" );
-            
-            //System.out.println( methodSignature.toString() );
-            
-            _method theStoreMethod = 
-                _method.of(storeSignature.toString(), 
-                    _code.of(storeBody.toString() ) );
-            
-            c.method( theStoreMethod );
-            //System.out.println( theStoreMethod );
-            
+            c.method( STORE.composeWith( (Object[])paramTypes ) );
         }
         return c;
     }
     
-    /** 
-     * given a String that represents a Class, returns an Array of Strings representing all
-     * Class names that are referenced in the String
-     * <PRE>
-     *    String gen = "Map<BigDecimal, ValueObject>";
-     *    String[] classes = {"Map", "BigDecimal", "ValueObject"};
-     * </PRE>
-     * 
-     * @param genericType String representation of a Generic Type
-     * @return an array of Strings for all types of the generic Type
-     */
-    public static String[] parseClassesFromGenericString( String genericType )
-    {
-        genericType = genericType.replace( "<", " ");
-        genericType = genericType.replace( ">", " ");
-        genericType = genericType.replace( ",", " ");
-        return genericType.split( " " );        
-    }
+    public static final Store STORE = new Store();
     
-    /*    
-    //upon construction, this will read the text inside 
-    //parse a _method (signature and code lines) and return
-    private static final class _DescribeLongField
+    public static class Store
         extends _Method
     {
-        static long bitMask64 = 0L;
-        static int shift = 0;
-        static int bitCount = 0;
-        private static long extractLongBits( long row ) { return 0L; }
-        static String name = "";
-        static class type 
+        static class type
         {
-            static String loadObject( long bin )
+            static long store()
             {
-                return null;
+                return 0L;
             }
         }
+        static int shift = 0;
         
-        public _method composeWith()
+        /**
+         * TODO I need to look into compiling with -parameter
+         * and extracting the actual parameter names
+         * http://docs.oracle.com/javase/tutorial/reflect/member/methodparameterreflection.html
+         * (At least TRYING) if we are using JDK 8 or better
+         * 
+         * otherwise I'll  just fall back into using "argN"
+         * @param elementTypes
+         * @return 
+         */
+        public _method composeWith( Object...elementTypes )
         {
-            return compose();
-        }
-        public static String describeFrame( long row )
-        {
-            long bits = ( row & bitMask64 ) >> shift;
-            String alignedBits = Frame.zeroPadToNBits( bits, bitCount );
-            alignedBits = Frame.shiftSpaces( alignedBits, shift );
-            alignedBits = Frame.to64Bit( alignedBits );
-            long bin = extractLongBits( row );
-            return alignedBits + " " + name 
-                + "[" + bin + "]->" + type.loadObject( bin );
+            String[] elementName = new String[ elementTypes.length ];
+            
+            for( int i = 0; i < elementName.length; i++ )
+            {
+                elementName[ i ] = "arg" + i;
+            }
+            return compose( 
+                "elementType", elementTypes, "elementName", elementName );
         }
         
-    }   
-    */
+        /*$*/
+        public static long store( /*{{+:{+elementType+} {+elementName+}, +}}*/ )
+        {            
+            return type.store( /*{{+:{+elementName+}, 
+            +}}*/ ) << shift;
+        }
+        /*$*/
+    }
     
     public static class _ExtractLongBits
         extends _Method
@@ -220,11 +160,8 @@ public class BitField_Author
             return ( row & bitMask64 ) >>> shift;
         }
         /*$*/
-    }
-    
-    //private static final _DescribeLongField _DESCRIBE_LONG_FIELD 
-    //    = new _DescribeLongField();
-    
+    } 
+   
     private static final _DescribeFrame DESCRIBE_FRAME = new _DescribeFrame();
     
     private static final _DescribeFrameRow DESCRIBE_FRAME_ROW 
@@ -295,9 +232,9 @@ public class BitField_Author
         public static String describeFrame( long row )
         {
             long bits = ( row & bitMask64 ) >>> shift;
-            String alignedBits = Frame.zeroPadToNBits( bits, bitCount );
-            alignedBits = Frame.shiftSpaces( alignedBits, shift );
-            alignedBits = Frame.to64Bit( alignedBits );
+            String alignedBits = Align.zeroPadToNBits( bits, bitCount );
+            alignedBits = Align.shiftSpaces( alignedBits, shift );
+            alignedBits = Align.to64Bit( alignedBits );
             long bin = extractLongBits( row );
             return alignedBits + " " + name 
                 + "[" + bin + "]->" + type.loadObject( bin );
@@ -315,7 +252,7 @@ public class BitField_Author
         /*$*/
         public static String describeFrame()
         {
-            return Frame.to64BitMask( bitMask64 ) + " " + name + type;
+            return Align.to64BitMask( bitMask64 ) + " " + name + type;
         }
         /*$*/
     }

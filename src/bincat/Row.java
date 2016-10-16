@@ -17,7 +17,7 @@ import bincat.type.Type;
  */
 public class Row
 {
-    /** fields in the row (containing {@code Type} and {@code Name} */
+    /** fields in the row (containing {@code Type} and {@code Name}) */
     public Field[] fields;
     
     public int fieldCount()

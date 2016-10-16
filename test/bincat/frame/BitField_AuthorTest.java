@@ -15,13 +15,13 @@ import varcode.java.code._class;
  *
  * @author eric
  */
-public class BitFieldAuthorTest
+public class BitField_AuthorTest
     extends TestCase
 {
     
     public void testNF()
     {
-        LongFrame lf = LongFrame.of(
+        BitFrame lf = BitFrame.of(
             "1...17770", "movieId",
             "1...5", "rating",
             "1...480196", "personId",

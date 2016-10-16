@@ -5,7 +5,7 @@
  */
 package bincat;
 
-import bincat.frame.LongFrame;
+import bincat.frame.BitFrame;
 import bincat.type.Range;
 import junit.framework.TestCase;
 
@@ -28,7 +28,7 @@ public class RowTest
             "1995-01-01...2009-01-01", "date", 
             "1...5", "rating" );
         
-        LongFrame lf = LongFrame.of( row );
+        BitFrame lf = BitFrame.of( row );
         System.out.println( lf );
     }
     

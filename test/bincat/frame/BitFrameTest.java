@@ -15,7 +15,7 @@ import junit.framework.TestCase;
  *
  * @author eric
  */
-public class LongFrameTest
+public class BitFrameTest
     extends TestCase
 {
     public void testLongRow()
@@ -27,7 +27,7 @@ public class LongFrameTest
             new Field( DayRange.of( "1996-01-01", "2008-12-31" ), "day" )                    
         );
         
-        LongFrame netflixPrize = new LongFrame( Netflix );
+        BitFrame netflixPrize = new BitFrame( Netflix );
         
         long first = netflixPrize.pack( 1,1,1,"1996-01-01" );
         

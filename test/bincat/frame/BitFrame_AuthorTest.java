@@ -17,7 +17,7 @@ import varcode.java.code._class;
  *
  * @author eric
  */
-public class LongFrame_AuthorTest
+public class BitFrame_AuthorTest
     extends TestCase
 {
     public void testLongFrame_Author()
@@ -29,9 +29,9 @@ public class LongFrame_AuthorTest
             new Field( DayRange.of( "1996-01-01", "2008-12-31" ), "day" )                    
         );
         
-        LongFrame netflixPrize = new LongFrame( Netflix );
+        BitFrame netflixPrize = new BitFrame( Netflix );
         
-        _class c = LongFrame_Author.of(
+        _class c = BitFrame_Author.of(
             "bitcat.frame.authored", "NetflixPrizeFrame", netflixPrize );
         
         System.out.println( c );

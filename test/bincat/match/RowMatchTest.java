@@ -7,7 +7,7 @@ package bincat.match;
 
 import bincat.match.RowMatch;
 import bincat.Field;
-import bincat.frame.LongFrame;
+import bincat.frame.BitFrame;
 import bincat.Row;
 import bincat.type.DayRange;
 import bincat.type.Range;
@@ -28,7 +28,7 @@ public class RowMatchTest
         new Field( Range.of( 1, 5 ), "rating" ) );
     
         
-    static LongFrame NetflixRow = new LongFrame( n );
+    static BitFrame NetflixRow = new BitFrame( n );
     
     public void testSynthesizeMatch()
     {

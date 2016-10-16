@@ -1,13 +1,12 @@
 package bincat.frame.authored;
 
-import bincat.frame.Frame;
+import bincat.frame.Align;
 import bincat.type.DayRange;
 import bincat.type.Range;
 import varcode.java.code._methods._method;
 import varcode.markup.codeml.code._Method;
 
 public class NetflixFrameCml
-    extends Frame
 {   
     public static class LoadField
         extends _Method
@@ -45,8 +44,8 @@ public class NetflixFrameCml
         public static String describeRow( long row )
         {
             StringBuilder sb = new StringBuilder();
-            String frameBits = Frame.zeroPadToNBits( row & mask(), bitCount() );
-            frameBits = Frame.to64Bit( frameBits, '-' );
+            String frameBits = Align.zeroPadToNBits( row & mask(), bitCount() );
+            frameBits = Align.to64Bit( frameBits, '-' );
             sb.append( frameBits );
             sb.append( " (" );
             sb.append( bitCount() );
@@ -141,9 +140,9 @@ public class NetflixFrameCml
         public static String describeFrame( long row )
         {
             long bits = ( row & bitMask64 ) >> shift;
-            String alignedBits = Frame.zeroPadToNBits( bits, bitCount );
-            alignedBits = Frame.shiftSpaces( alignedBits, shift );
-            alignedBits = Frame.to64Bit( alignedBits );
+            String alignedBits = Align.zeroPadToNBits( bits, bitCount );
+            alignedBits = Align.shiftSpaces( alignedBits, shift );
+            alignedBits = Align.to64Bit( alignedBits );
             long bin = extractLongBits( row );
             return alignedBits + " " + name 
                 + "[" + bin + "]->" + type.loadObject( bin );
@@ -153,7 +152,7 @@ public class NetflixFrameCml
          */
         public static String describeFrame(  )
         {
-            return Frame.to64BitMask( bitMask64 ) + " " + name + type;
+            return Align.to64BitMask( bitMask64 ) + " " + name + type;
         }
         public static long store( long value1 )
         {
@@ -193,9 +192,9 @@ public class NetflixFrameCml
         public static String describeFrame( long row )
         {
             long bits = ( row & bitMask64 ) >> shift;
-            String alignedBits = Frame.zeroPadToNBits( bits, bitCount );
-            alignedBits = Frame.shiftSpaces( alignedBits, shift );
-            alignedBits = Frame.to64Bit( alignedBits );
+            String alignedBits = Align.zeroPadToNBits( bits, bitCount );
+            alignedBits = Align.shiftSpaces( alignedBits, shift );
+            alignedBits = Align.to64Bit( alignedBits );
             long bin = extractLongBits( row );
             return alignedBits + " " + name 
                 + "[" + bin + "]->" + type.loadObject( bin );
@@ -205,7 +204,7 @@ public class NetflixFrameCml
          */
         public static String describeFrame(  )
         {
-            return Frame.to64BitMask( bitMask64 ) + " " + name + type;
+            return Align.to64BitMask( bitMask64 ) + " " + name + type;
         }
         public static long store( long value1 )
         {
@@ -245,9 +244,9 @@ public class NetflixFrameCml
         public static String describeFrame( long row )
         {
             long bits = ( row & bitMask64 ) >> shift;
-            String alignedBits = Frame.zeroPadToNBits( bits, bitCount );
-            alignedBits = Frame.shiftSpaces( alignedBits, shift );
-            alignedBits = Frame.to64Bit( alignedBits );
+            String alignedBits = Align.zeroPadToNBits( bits, bitCount );
+            alignedBits = Align.shiftSpaces( alignedBits, shift );
+            alignedBits = Align.to64Bit( alignedBits );
             long bin = extractLongBits( row );
             return alignedBits + " " + name 
                 + "[" + bin + "]->" + type.loadObject( bin );
@@ -257,7 +256,7 @@ public class NetflixFrameCml
          */
         public static String describeFrame(  )
         {
-            return Frame.to64BitMask( bitMask64 ) + " " + name + type;
+            return Align.to64BitMask( bitMask64 ) + " " + name + type;
         }
         public static long store( long value1 )
         {
@@ -297,9 +296,9 @@ public class NetflixFrameCml
         public static String describeFrame( long row )
         {
             long bits = ( row & bitMask64 ) >> shift;
-            String alignedBits = Frame.zeroPadToNBits( bits, bitCount );
-            alignedBits = Frame.shiftSpaces( alignedBits, shift );
-            alignedBits = Frame.to64Bit( alignedBits );
+            String alignedBits = Align.zeroPadToNBits( bits, bitCount );
+            alignedBits = Align.shiftSpaces( alignedBits, shift );
+            alignedBits = Align.to64Bit( alignedBits );
             long bin = extractLongBits( row );
             return alignedBits + " " + name 
                 + "[" + bin + "]->" + type.loadObject( bin );
@@ -309,7 +308,7 @@ public class NetflixFrameCml
          */
         public static String describeFrame(  )
         {
-            return Frame.to64BitMask( bitMask64 ) + " " + name + type;
+            return Align.to64BitMask( bitMask64 ) + " " + name + type;
         }
         public static long store( String value1 )
         {

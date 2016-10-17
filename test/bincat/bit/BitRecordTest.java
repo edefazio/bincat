@@ -21,20 +21,31 @@ public class BitRecordTest
     public static final Logger LOG = 
         LoggerFactory.getLogger( BitRecordTest.class );
     
-    public void testBitRecord()
-    {
-        BitFrame a = BitFrame.of(
+    static BitFrame a = BitFrame.of(
             Range.of( 0, Integer.MAX_VALUE ), "A",
             Range.of( 0, Integer.MAX_VALUE ), "B"       
         );
         
-        BitFrame b = BitFrame.of(
+    static BitFrame b = BitFrame.of(
             Range.of( 0, Integer.MAX_VALUE ), "C",
             Range.of( 0, Integer.MAX_VALUE ), "D"       
         );
         
-        BitRecord abcd = BitRecord.of( a, b );
+    static BitRecord abcd = BitRecord.of( a, b );
         
+    public void testValidate()
+    {        
+        //this will fail (both bad)
+        assertTrue( !abcd.isValid( new long[]{ -1, -1 } ) );
+        
+        //second frame bad
+        assertTrue( !abcd.isValid( new long[]{ 0, -1 } ) );
+        
+        //first frame bad
+        assertTrue( !abcd.isValid( new long[]{ -1, 0 } ) );
+    }
+    public void testBitRecord()
+    {
         LOG.debug( abcd.describe() );
         
         //verify pack and unpack are reversable
@@ -46,7 +57,10 @@ public class BitRecordTest
         assertEquals( 1L, values[ 1 ] );
         assertEquals( 2L, values[ 2 ] );
         assertEquals( 3L, values[ 3 ] );
-        
+    }
+    
+    public void testSynthValidateLoadPackUnpack()
+    {
         //OK lets saturation test synthesize, isValid, load, 
         //pack and unpack verify they are reversable
         int iterations = 10000;
@@ -62,11 +76,7 @@ public class BitRecordTest
             //now pack everything back in
             long[] packed = abcd.pack( A, B, C, D );
             
-            if( ! Arrays.equals( packed, synthesized ) )
-            {
-                LOG.debug( abcd.describe( synthesized ) );
-                LOG.debug( abcd.describe( packed ) );
-            }
+            assertTrue( Arrays.equals( packed, synthesized ) );
             //verify that I got the same result
             //assertTrue(  );
             
@@ -77,5 +87,9 @@ public class BitRecordTest
             assertEquals( C, unpackedValues[ 2 ] );
             assertEquals( D, unpackedValues[ 3 ] );            
         }
+        
+        assertEquals( 4, abcd.fieldCount() );
+        assertTrue( abcd.isValid(new long[]{ 0, 0 } ) );
+        
     }
 }

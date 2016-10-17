@@ -48,10 +48,10 @@ public class BitFrame_Author
         }
         
         /*$*/
-        public static boolean isValid( long row )
+        public static boolean isValid( long word )
         {
             return /*{-*/true/*-}*/
-            /*{{+:$FieldName$.isValid( row ) && 
+            /*{{+:$FieldName$.isValid( word ) && 
             +}}*/; 
         }
         /*$*/
@@ -66,11 +66,11 @@ public class BitFrame_Author
         }
         
         /*$*/
-        /** calculates and returns the Frame's BitMask  */
+        /** calculates and returns the Frame's mask  */
         public static long mask()
         {
             long mask = 0L;
-            /*{{+:mask |= $FieldName$.bitMask64;            
+            /*{{+:mask |= $FieldName$.mask;            
             +}}*/
             return mask;
         }
@@ -194,8 +194,15 @@ public class BitFrame_Author
         /*$*/
     }
     
-    public static LoadField LOAD_FIELD = new LoadField();
-    
+    public static LoadField _LOAD_FIELD = new LoadField();
+    public static Pack _PACK = new Pack();
+    public static Unpack _UNPACK = new Unpack();
+    public static IsValid _IS_VALID = new IsValid();
+    public static BitCount _BITCOUNT = new BitCount();
+    public static DescribeRow _DESCRIBE_ROW = new DescribeRow();
+    public static Mask _MASK = new Mask();
+    public static Synthesize _SYNTHESIZE = new Synthesize();
+        
     public static _class of( 
         String packageName, String className, BitFrame longFrame )
     {
@@ -230,16 +237,16 @@ public class BitFrame_Author
             String loadType = methods.get( 0 ).getSignature().getReturnType();
             
             //add load() methods to read each field from the row
-            c.method( LOAD_FIELD.composeWith( fieldNames[ i ], loadType ) );
+            c.method( _LOAD_FIELD.composeWith( fieldNames[ i ], loadType ) );
             elementTypes[ i ] = loadType;
         }
-        c.method( new Pack().composeWith( elementTypes, fieldNames ) );
-        c.method( new Unpack().composeWith( fieldNames ) );
-        c.method( new IsValid().composeWith( fieldNames ) );
-        c.method( new BitCount().composeWith( fieldNames ) );
-        c.method( new DescribeRow().composeWith( fieldNames ) );
-        c.method( new Mask().composeWith( fieldNames ) );
-        c.method( new Synthesize().composeWith( fieldNames ) );
+        c.method( _PACK.composeWith( elementTypes, fieldNames ) );
+        c.method( _UNPACK.composeWith( fieldNames ) );
+        c.method( _IS_VALID.composeWith( fieldNames ) );
+        c.method( _BITCOUNT.composeWith( fieldNames ) );
+        c.method( _DESCRIBE_ROW.composeWith( fieldNames ) );
+        c.method( _MASK.composeWith( fieldNames ) );
+        c.method( _SYNTHESIZE.composeWith( fieldNames ) );
             
         return c;
     }    

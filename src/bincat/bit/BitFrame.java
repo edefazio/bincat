@@ -57,15 +57,16 @@ public class BitFrame
     }
     
     /**
-     * Describe the contents of the Row 
-     * @param row the row
+     * Describe the contents of the 64-bit Word based on the {@code BitField}s 
+     * of the {@code BitFrame} 
+     * @param word the field data
      * @return a String description of how each of the Fields 
      * in the row are laid out physically
      */
-    public String describe( long row )
+    public String describe( long word )
     {
         StringBuilder sb = new StringBuilder();
-        String frameBits = BitAlign.zeroPadToNBits( row & mask(), bitCount() );
+        String frameBits = BitAlign.zeroPadToNBits( word & mask(), bitCount() );
         frameBits = BitAlign.to64Bit( frameBits, '-' );
         sb.append( frameBits );
         //sb.append( Frame.to64Bit( mask() ).replace(' ', '-') );
@@ -76,7 +77,7 @@ public class BitFrame
         sb.append( System.lineSeparator() );
         for( int i = 0; i < bitFields.length; i++ )
         {
-            sb.append( bitFields[ i ].describeFrame( row ) );
+            sb.append( bitFields[ i ].describeFrame( word ) );
             sb.append( System.lineSeparator() );
         }
         return sb.toString();        
@@ -115,11 +116,15 @@ public class BitFrame
         return bitCount;
     }
     
-    public boolean isValid( long row )
+    public boolean isValid( long word )
     {
+        if ( ( word & mask() ) != word )
+        {
+            return false;
+        }
         for( int i = 0; i < bitFields.length; i++ )
         {
-            if( ! bitFields[ i ].isValid( row ) )
+            if( ! bitFields[ i ].isValid(word ) )
             {
                 return false;
             }
@@ -143,15 +148,16 @@ public class BitFrame
  
     /**
      * Converts the Row of Data to Bins and binary packs the row in the frame
-     * @param rowData
-     * @return 
+     * @param fieldValues the values for all fields of the {@code BitFrame} in order
+     * @return a packed word containing the packed [Bin]s for all 
+     * {@code BitField}s in the {@code BitFrame}
      */
-    public long pack( Object...rowData )
+    public long pack( Object...fieldValues )
     {
         long packed = 0;
         for( int i = 0; i < this.bitFields.length; i++ )
         {
-            packed |= this.bitFields[ i ].storeObject( rowData[ i ] );
+            packed |= this.bitFields[ i ].storeObject( fieldValues[ i ] );
         }
         return packed;
     }
@@ -176,44 +182,50 @@ public class BitFrame
         return null;        
     }
     
-    public Object loadField( String fieldName, long row )
-    {
-        BitField field = getField( fieldName );
-        if( field != null )
-        {
-            return field.loadObject( row );
-        }
-        throw new BinCatException(
-            "No field named \"" + fieldName + "\" in " + System.lineSeparator() 
-            + describe() );                
-    }
-    
     /**
      * returns the BitField at the given index
-     * @param index the index of the Field
+     * @param fieldIndex the index of the Field
      * @return the Field
      */
-    public BitField getFieldAt( int index )
+    public BitField getFieldAt( int fieldIndex )
     {
-        if( index < 0 || index > this.bitFields.length -1 )
+        if( fieldIndex < 0 || fieldIndex > this.bitFields.length -1 )
         {
-            throw new BinCatException( "Index [" + index + "] out of bounds" );
+            throw new BinCatException( "Index [" + fieldIndex + "] out of bounds" );
         }
-        return this.bitFields[ index ];
+        return this.bitFields[ fieldIndex ];
     }
     
-    public Object load( long row, String name )
+    /** 
+     * load and return the value given the name of the field
+     * @param fieldName the name of the field
+     * @param word the [Bin] data-packed word
+     */
+    public Object load( String fieldName, long word  )
     {
-        BitField bf = getField( name );
-        return bf.loadObject( row );
+        BitField bf = getField( fieldName );
+        if( bf == null )
+        {
+            throw new BinCatException( 
+                "No field named \"" + fieldName + "\" in Frame " 
+                + System.lineSeparator() + describe() );
+        }
+        return bf.loadObject( word );
     }
     
-    public Object[] unpack( long row )
+    public long store( String fieldName, Object fieldValue, long word )
+    {
+        BitField bf = getField( fieldName );
+        word = ( word & ~bf.mask() ); //wipe out the old value        
+        return ( word | bf.storeObject( fieldValue ) ); //plug in the new value
+    }
+    
+    public Object[] unpack( long word )
     {
         Object[] rowValues = new Object[ this.bitFields.length ];
         for( int i = 0; i < rowValues.length; i++ )
         {
-            rowValues[ i ] = this.bitFields[ i ].loadObject( row );
+            rowValues[ i ] = this.bitFields[ i ].loadObject(word );
         }
         return rowValues;
     }    

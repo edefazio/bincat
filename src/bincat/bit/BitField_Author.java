@@ -45,7 +45,7 @@ public class BitField_Author
 
         
         c.field( "64-bit (long) bitmask for the field bits",
-            "public static final long bitMask64 = 0b" 
+            "public static final long mask = 0b" 
                 + BitAlign.to64Bit( bitField.mask, '0' ) + "L;" );
         
         c.method( _DESCRIBE_FRAME_ROW.compose( ) );
@@ -153,13 +153,13 @@ public class BitField_Author
     public static class _ExtractBin
         extends _Method
     {
-        public static long bitMask64 = 0L;
+        public static long mask = 0L;
         public static int shift = 0;
         
         /*$*/
         public static long extractBin( long row ) 
         {
-            return ( row & bitMask64 ) >>> shift;
+            return ( row & mask ) >>> shift;
         }
         /*$*/
     } 
@@ -185,7 +185,7 @@ public class BitField_Author
     {
         public static class $loadType$ {}
         
-        public static long extractBin( long row ) { return 0L; }
+        public static long extractBin( long word ) { return 0L; }
         
         public static class type 
         { 
@@ -198,9 +198,9 @@ public class BitField_Author
         }
         
         /*$*/
-        public static $loadType$ load( long row )
+        public static $loadType$ load( long word )
         {
-            return type.load( extractBin( row ) );
+            return type.load( extractBin( word ) );
         }
         /*$*/
     }
@@ -222,10 +222,10 @@ public class BitField_Author
     public static final class _DescribeFrameRow
         extends _Method
     {
-        public static long bitMask64 = 0L;
+        public static long mask = 0L;
         public static int shift = 0;
         public static int bitCount = 0;
-        public static long extractBin( long row ) { return 0L; }
+        public static long extractBin( long word ) { return 0L; }
         public static String name = "";
         public static class type 
         { 
@@ -233,13 +233,13 @@ public class BitField_Author
         } 
         
         /*$*/
-        public static String describeFrame( long row )
+        public static String describeFrame( long word )
         {
-            long bits = ( row & bitMask64 ) >>> shift;
+            long bits = ( word & mask ) >>> shift;
             String alignedBits = BitAlign.zeroPadToNBits( bits, bitCount );
             alignedBits = BitAlign.shiftSpaces( alignedBits, shift );
             alignedBits = BitAlign.to64Bit( alignedBits );
-            long bin = extractBin( row );
+            long bin = extractBin( word );
             return alignedBits + " " + name 
                 + "[" + bin + "]->" + type.loadObject( bin );
         }
@@ -249,14 +249,14 @@ public class BitField_Author
     public static final class _DescribeFrame
         extends _Method
     {
-        public static long bitMask64 = 0L;
+        public static long mask = 0L;
         public static String name = "";
         public static String type = "type";
         
         /*$*/
         public static String describeFrame()
         {
-            return BitAlign.to64BitMask( bitMask64 ) + " " + name + type;
+            return BitAlign.to64BitMask( mask ) + " " + name + type;
         }
         /*$*/
     }
@@ -273,9 +273,9 @@ public class BitField_Author
         }
         
         /*$*/
-        public static boolean isValid( long row )
+        public static boolean isValid( long word )
         {
-            return type.isValidBin( extractBin( row ) );
+            return type.isValidBin( extractBin( word ) );
         }
         /*$*/
     }        

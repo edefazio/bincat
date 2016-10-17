@@ -46,13 +46,15 @@ public class BitField_Author
         
         c.field( "64-bit (long) bitmask for the field bits",
             "public static final long bitMask64 = 0b" 
-                + BitAlign.to64Bit(bitField.mask, '0' ) + "L;" );
+                + BitAlign.to64Bit( bitField.mask, '0' ) + "L;" );
         
-        c.method( DESCRIBE_FRAME_ROW.compose( ) );
-        c.method( DESCRIBE_FRAME.compose( ) );
-        c.method( TO_STRING.compose( ) );
-        c.method( EXTRACT_LONG_BITS.compose( ) );
-        c.method( SYNTHESIZE.compose( ) );
+        c.method( _DESCRIBE_FRAME_ROW.compose( ) );
+        c.method( _DESCRIBE_FRAME.compose( ) );
+        c.method( _TO_STRING.compose( ) );
+        c.method( _EXTRACT_BIN.compose( ) );
+        c.method( _SYNTHESIZE.compose( ) );
+        c.method( _IS_VALID.compose( ) );
+        
         c.imports( BitAlign.class );
         
         //c = buildStoreMethods( c, typeClass );
@@ -76,7 +78,7 @@ public class BitField_Author
         
         String loadType = T.translate( t );
         
-        _bitFieldClass.method( LOAD.composeWith( loadType ) );        
+        _bitFieldClass.method( _LOAD.composeWith( loadType ) );        
         return _bitFieldClass;        
     }
     
@@ -148,40 +150,42 @@ public class BitField_Author
         /*$*/
     }
     
-    public static class _ExtractLongBits
+    public static class _ExtractBin
         extends _Method
     {
         public static long bitMask64 = 0L;
         public static int shift = 0;
         
         /*$*/
-        public static long extractLongBits( long row ) 
+        public static long extractBin( long row ) 
         {
             return ( row & bitMask64 ) >>> shift;
         }
         /*$*/
     } 
    
-    private static final _DescribeFrame DESCRIBE_FRAME = new _DescribeFrame();
+    private static final _DescribeFrame _DESCRIBE_FRAME = new _DescribeFrame();
     
-    private static final _DescribeFrameRow DESCRIBE_FRAME_ROW 
+    private static final _DescribeFrameRow _DESCRIBE_FRAME_ROW 
         = new _DescribeFrameRow();
     
-    private static final _ExtractLongBits EXTRACT_LONG_BITS 
-        = new _ExtractLongBits();
+    private static final _ExtractBin _EXTRACT_BIN 
+        = new _ExtractBin();
     
-    private static final _Synthesize SYNTHESIZE = new _Synthesize();
+    private static final _Synthesize _SYNTHESIZE = new _Synthesize();
     
-    private static final _ToString TO_STRING = new _ToString();
+    private static final _ToString _TO_STRING = new _ToString();
     
-    private static final _Load LOAD = new _Load();
+    private static final _Load _LOAD = new _Load();
+    
+    private static final IsValid _IS_VALID = new IsValid();
     
     private static class _Load
          extends _Method
     {
         public static class $loadType$ {}
         
-        public static long extractLongBits( long row ) { return 0L; }
+        public static long extractBin( long row ) { return 0L; }
         
         public static class type 
         { 
@@ -196,7 +200,7 @@ public class BitField_Author
         /*$*/
         public static $loadType$ load( long row )
         {
-            return type.load( extractLongBits( row ) );
+            return type.load( extractBin( row ) );
         }
         /*$*/
     }
@@ -221,7 +225,7 @@ public class BitField_Author
         public static long bitMask64 = 0L;
         public static int shift = 0;
         public static int bitCount = 0;
-        public static long extractLongBits( long row ) { return 0L; }
+        public static long extractBin( long row ) { return 0L; }
         public static String name = "";
         public static class type 
         { 
@@ -235,7 +239,7 @@ public class BitField_Author
             String alignedBits = BitAlign.zeroPadToNBits( bits, bitCount );
             alignedBits = BitAlign.shiftSpaces( alignedBits, shift );
             alignedBits = BitAlign.to64Bit( alignedBits );
-            long bin = extractLongBits( row );
+            long bin = extractBin( row );
             return alignedBits + " " + name 
                 + "[" + bin + "]->" + type.loadObject( bin );
         }
@@ -257,6 +261,25 @@ public class BitField_Author
         /*$*/
     }
     
+    public static class IsValid
+        extends _Method
+    {
+        static class type{ 
+            public static boolean isValidBin( long bin ) { return true;} 
+        }
+        static long extractBin( long row )
+        {
+            return 0L;
+        }
+        
+        /*$*/
+        public static boolean isValid( long row )
+        {
+            return type.isValidBin( extractBin( row ) );
+        }
+        /*$*/
+    }        
+            
     public static class _Synthesize
         extends _Method
     {

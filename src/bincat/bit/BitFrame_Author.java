@@ -38,6 +38,25 @@ public class BitFrame_Author
         }
         /*$*/
     }
+    
+    public static class IsValid
+        extends _Method
+    {
+        public _method composeWith( String[] fieldNames )
+        {
+            return compose( "fieldName", fieldNames );
+        }
+        
+        /*$*/
+        public static boolean isValid( long row )
+        {
+            return /*{-*/true/*-}*/
+            /*{{+:$FieldName$.isValid( row ) && 
+            +}}*/; 
+        }
+        /*$*/
+    }
+            
     public static class Mask
         extends _Method
     {
@@ -104,6 +123,26 @@ public class BitFrame_Author
             sb.append( System.lineSeparator() );
             +}}*/    
             return sb.toString();
+        }
+        /*$*/
+    }
+    
+    public static class Unpack
+        extends _Method
+    {
+        public _method composeWith( String[] fieldNames )
+        {
+            return compose( "fieldName", fieldNames );
+        }
+        
+        /*$*/
+        public static Object[] unpack( long row )
+        {   /*{#index:$[#](fieldName)#}*/
+            Object[] unpacked = new Object[ /*{+$#(fieldName)*/ 0 /*+}*/ ]; 
+            
+            /*{{+:unpacked[ {+index+} ] = $FieldName$.load( row );
+            +}}*/
+            return unpacked;
         }
         /*$*/
     }
@@ -195,6 +234,8 @@ public class BitFrame_Author
             elementTypes[ i ] = loadType;
         }
         c.method( new Pack().composeWith( elementTypes, fieldNames ) );
+        c.method( new Unpack().composeWith( fieldNames ) );
+        c.method( new IsValid().composeWith( fieldNames ) );
         c.method( new BitCount().composeWith( fieldNames ) );
         c.method( new DescribeRow().composeWith( fieldNames ) );
         c.method( new Mask().composeWith( fieldNames ) );

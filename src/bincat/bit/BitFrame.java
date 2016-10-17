@@ -176,6 +176,18 @@ public class BitFrame
         return null;        
     }
     
+    public Object loadField( String fieldName, long row )
+    {
+        BitField field = getField( fieldName );
+        if( field != null )
+        {
+            return field.loadObject( row );
+        }
+        throw new BinCatException(
+            "No field named \"" + fieldName + "\" in " + System.lineSeparator() 
+            + describe() );                
+    }
+    
     /**
      * returns the BitField at the given index
      * @param index the index of the Field

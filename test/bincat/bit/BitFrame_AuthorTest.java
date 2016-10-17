@@ -37,7 +37,7 @@ public class BitFrame_AuthorTest
         BitFrame netflixPrize = new BitFrame( Netflix );
         
         _class c = BitFrame_Author.of(
-            "bitcat.frame.authored", "NetflixPrizeFrame", netflixPrize );
+            "bitcat.frame.a", "NetflixPrizeFrame", netflixPrize );
         
         LOG.debug( c.toString() );
         
@@ -53,6 +53,14 @@ public class BitFrame_AuthorTest
             nfClass, "pack", 17770L, 480196L, 5L, DayRange.dateOf("2008-12-31")
         );
         
+        //unpack the packed
+        Object[] unpacked = (Object[])Java.invoke(nfClass, "unpack", packed );
+        
+        //verify that we can round-trip back to values
+        assertEquals( unpacked[ 0 ], 17770L );
+        assertEquals( unpacked[ 1 ], 480196L );
+        assertEquals( unpacked[ 2 ], 5L );
+        assertEquals( unpacked[ 3 ], DayRange.dateOf( "2008-12-31" ) );
         
     }
 }

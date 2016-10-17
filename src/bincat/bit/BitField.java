@@ -1,10 +1,10 @@
-package bincat.frame;
+package bincat.bit;
 
 import bincat.Field;
 import bincat.type.Type;
 
 /**
- * A Field that exists within a Frame (i.e. assigned to specific bits
+ * {@code Field} whos bits are assigned to assigned to specific bits
  * within a 64 bit Frame)
  * 
  * @author M. Eric DeFazio eric@varcode.io
@@ -25,13 +25,13 @@ public class BitField
     
     public final int shift;
     
-    public final long bitMask64;
+    public final long mask;
         
     public BitField( Field field, int shift )
     {
         this.field = field;
         this.shift = shift;        
-        this.bitMask64 = ( -1L >>> ( 64 - field.type.bitCount() ) ) << shift;
+        this.mask = ( -1L >>> ( 64 - field.type.bitCount() ) ) << shift;
     }
     
     /**
@@ -41,10 +41,10 @@ public class BitField
      */
     public String describeFrame( long row )
     {
-        long bits = ( row & bitMask64 ) >> shift;
-        String alignedBits = Align.zeroPadToNBits( bits, field.type.bitCount() );
-        alignedBits = Align.shiftSpaces( alignedBits, shift );
-        alignedBits = Align.to64Bit( alignedBits );
+        long bits = ( row & mask ) >> shift;
+        String alignedBits = BitAlign.zeroPadToNBits( bits, field.type.bitCount() );
+        alignedBits = BitAlign.shiftSpaces( alignedBits, shift );
+        alignedBits = BitAlign.to64Bit( alignedBits );
         long bin = extractBits(row);
         return alignedBits + " " + field.name 
             + "[" + bin + "]->" + field.type.loadObject( bin );
@@ -58,7 +58,7 @@ public class BitField
     @Override
     public String toString()
     {
-        return Align.to64BitMask( bitMask64 ) + " "+ field.name + field.type;
+        return BitAlign.to64BitMask(mask ) + " "+ field.name + field.type;
     }
     
     public int bitCount()
@@ -66,12 +66,12 @@ public class BitField
         return field.getType().bitCount();
     }
     
-    public long longMask()
+    public long mask()
     {
-        return bitMask64;
+        return mask;
     }
     
-    public long storeLong( Object value )
+    public long storeObject( Object value )
     {
         return field.getType().storeObject( value ) << shift;
     }
@@ -83,7 +83,17 @@ public class BitField
     
     public long extractBits( long row )
     {
-        return ( row & bitMask64 ) >>> shift;
+        return ( row & mask ) >>> shift;
+    }
+    
+    /**
+     * Is the field within this row valid
+     * @param row the row
+     * @return true if valid, false otherwise
+     */
+    public boolean isValid( long row )
+    {
+        return this.field.getType().isValidBin( extractBits( row ) );
     }
     
     public long synthesizeBin()

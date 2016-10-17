@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bincat.frame;
+package bincat.bit;
 
+import bincat.bit.BitFrame;
 import bincat.Field;
-import bincat.Row;
+import bincat.Record;
 import bincat.type.DayRange;
 import bincat.type.Range;
 import junit.framework.TestCase;
@@ -20,7 +21,7 @@ public class BitFrameTest
 {
     public void testLongRow()
     {
-        Row Netflix = new Row(
+        Record Netflix = new Record(
             new Field( Range.of( 1, 17770 ), "movieId" ),
             new Field( Range.of( 1, 480196 ), "personId" ),
             new Field( Range.of( 1, 5 ), "rating" ),
@@ -41,10 +42,10 @@ public class BitFrameTest
         assertEquals( DayRange.dateOf( "1996-01-01" ), unpacked[ 3 ] );        
         
         
-        System.out.println( Long.toBinaryString(netflixPrize.getField("movieId").bitMask64 ));
-        System.out.println( Long.toBinaryString(netflixPrize.getField("personId").bitMask64 ));
-        System.out.println( Long.toBinaryString(netflixPrize.getField("rating").bitMask64 ));
-        System.out.println( Long.toBinaryString(netflixPrize.getField("day").bitMask64 ));
+        System.out.println( Long.toBinaryString(netflixPrize.getField("movieId").mask ));
+        System.out.println( Long.toBinaryString(netflixPrize.getField("personId").mask ));
+        System.out.println( Long.toBinaryString(netflixPrize.getField("rating").mask ));
+        System.out.println( Long.toBinaryString(netflixPrize.getField("day").mask ));
         
         long last = netflixPrize.pack( 17770,480196,5,"2008-12-31" );
         

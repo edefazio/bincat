@@ -5,10 +5,10 @@
  */
 package bincat.match;
 
-import bincat.match.RowMatch;
+import bincat.match.FrameMatch;
 import bincat.Field;
-import bincat.frame.BitFrame;
-import bincat.Row;
+import bincat.bit.BitFrame;
+import bincat.Record;
 import bincat.type.DayRange;
 import bincat.type.Range;
 import java.util.function.LongFunction;
@@ -21,7 +21,7 @@ import junit.framework.TestCase;
 public class RowMatchTest
      extends TestCase
 {
-    static Row n = new Row(
+    static Record n = new Record(
         new Field( Range.of( 1, 17770 ), "movieId" ),        
         new Field( Range.of( 1, 480196 ), "personId" ),                
         new Field( DayRange.of( "01-01-1996", "12-31-2012" ), "day" ),
@@ -39,12 +39,12 @@ public class RowMatchTest
         */
         
         LongFunction<Boolean> matchRatingEqual5 = 
-            RowMatch.LongRow.equal( 
+            FrameMatch.LongRow.equal( 
                 NetflixRow.getField( "rating" ), 5 );
         
         
         LongFunction<Boolean> matchDayOneOf = 
-            RowMatch.LongRow.oneOf( 
+            FrameMatch.LongRow.oneOf( 
                 NetflixRow.getField( "day" ), 
                     "01-02-1996", "12-25-2006", "10-31-2009" );
         

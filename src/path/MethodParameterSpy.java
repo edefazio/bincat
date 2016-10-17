@@ -36,7 +36,7 @@ package path;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */ 
 
-import bincat.frame.BitField;
+import bincat.bit.BitField;
 import java.lang.reflect.*;
 import java.util.function.*;
 import static java.lang.System.out;

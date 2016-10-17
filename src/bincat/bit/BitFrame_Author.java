@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bincat.frame;
+package bincat.bit;
 
 import bincat.BinCatException;
 import java.util.List;
@@ -15,7 +15,7 @@ import varcode.markup.codeml.code._Method;
  * Takes a Frame, authors an Enum that 
  * Can be used for the Frame
  * 
- * @author M. Eric DeFazio eric@bitc.at
+ * @author M. Eric DeFazio eric@varcode.io
  */
 public class BitFrame_Author
 {   
@@ -91,8 +91,8 @@ public class BitFrame_Author
         public static String describeRow( long row )
         {
             StringBuilder sb = new StringBuilder();
-            String frameBits = Align.zeroPadToNBits( row & mask(), bitCount() );
-            frameBits = Align.to64Bit( frameBits, '-' );
+            String frameBits = BitAlign.zeroPadToNBits( row & mask(), bitCount() );
+            frameBits = BitAlign.to64Bit( frameBits, '-' );
             sb.append( frameBits );
             sb.append( " (");
             sb.append( bitCount() );
@@ -104,6 +104,25 @@ public class BitFrame_Author
             sb.append( System.lineSeparator() );
             +}}*/    
             return sb.toString();
+        }
+        /*$*/
+    }
+    
+    public static class Pack
+        extends _Method
+    {
+        public _method composeWith( String[] elementTypes, String[] fieldNames )
+        {
+            return compose( 
+                "fieldElementType", elementTypes, "fieldName", fieldNames );
+        }
+        /*$*/
+        public static long pack( /*{{+:$fieldElementType$ $fieldName$, +}}*/ )
+        {
+            long packed = 0L;
+            /*{{+:packed |= $FieldName$.store( $fieldName$ );            
+            +}}*/
+            return packed;
         }
         /*$*/
     }
@@ -142,10 +161,12 @@ public class BitFrame_Author
         String packageName, String className, BitFrame longFrame )
     {
         _class c = _class.of( 
-            packageName, className + " extends Frame" );
-        c.imports( Align.class );
+            packageName, className );
+        c.imports( BitAlign.class );
         
         String[] fieldNames = new String[ longFrame.bitFields.length ];
+        
+        String[] elementTypes = new String[ longFrame.bitFields.length ];
         
         for( int i = 0; i < longFrame.bitFields.length; i++) 
         {
@@ -171,7 +192,9 @@ public class BitFrame_Author
             
             //add load() methods to read each field from the row
             c.method( LOAD_FIELD.composeWith( fieldNames[ i ], loadType ) );
+            elementTypes[ i ] = loadType;
         }
+        c.method( new Pack().composeWith( elementTypes, fieldNames ) );
         c.method( new BitCount().composeWith( fieldNames ) );
         c.method( new DescribeRow().composeWith( fieldNames ) );
         c.method( new Mask().composeWith( fieldNames ) );

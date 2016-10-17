@@ -6,22 +6,17 @@
 package bincat.match;
 
 import bincat.Field;
-import bincat.frame.BitField;
-import bincat.type.Range;
+import bincat.bit.BitField;
 import java.util.Arrays;
-import java.util.function.IntFunction;
 import java.util.function.LongFunction;
 
 /**
  *
  * @author eric
  */
-public enum RowMatch
+public enum FrameMatch
 {
     ;
-    
-   
-    
     
     public enum LongRow 
     {
@@ -44,11 +39,11 @@ public enum RowMatch
             final long[] targets = new long[ values.length ];
             for( int i = 0; i < values.length; i++)
             {
-                targets[ i ] = field.storeLong( values[ i ] );
+                targets[ i ] = field.storeObject( values[ i ] );
             }
             Arrays.sort( targets );
             //return (it) -> arrayContains( targets, (it & field.longMask() ) ); 
-            return it -> Arrays.binarySearch( targets, it & field.bitMask64 ) >= 0;
+            return it -> Arrays.binarySearch( targets, it & field.mask ) >= 0;
             /*
             for( int i = 0; i < targets.length; i++ )
                 {
@@ -65,8 +60,8 @@ public enum RowMatch
         public static LongFunction<Boolean> equal( 
             BitField field, Object value )
         {
-            final long target = field.storeLong( value );
-            return it -> ( ( it & field.bitMask64 ) ) == target;
+            final long target = field.storeObject( value );
+            return it -> ( ( it & field.mask ) ) == target;
         }
                 
         public static LongFunction<Boolean> equal( 

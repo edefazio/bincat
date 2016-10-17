@@ -1,11 +1,11 @@
-package bincat.frame;
+package bincat.bit;
 
 /**
  * Aligns Bits within a 64-bit BitFrame
  * 
  * @author M. Eric DeFazio eric@varcode.io
  */
-public class Align
+public class BitAlign
 {
     /** String of 0 to 64 ' ' (spaces) */
     public static final String[] SPACES = new String[ 65 ];
@@ -24,7 +24,7 @@ public class Align
         }
     }
                     
-    private Align()
+    private BitAlign()
     {        
     }
     

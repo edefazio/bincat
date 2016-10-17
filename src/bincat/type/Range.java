@@ -12,7 +12,7 @@ import bincat.synthesize.Synthesize;
  * this is a 0, or positive int range, that MUST have at least (2) states
  * (0, or 1)
  * 
- * @author eric
+ * @author M. Eric DeFazio eric@varcode.io
  */
 public class Range
     implements Type
@@ -59,6 +59,12 @@ public class Range
         return bin + min;
     }
 
+    @Override
+    public boolean isValidBin( long bin )
+    {
+        return bin <= ( max - min ) && bin >= 0;
+    }
+        
     @Override
     public long storeObject( Object value )
     {

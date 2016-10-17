@@ -1,38 +1,25 @@
-package bincat.frame.authored;
+package bincat.bit.authored;
 
-import bincat.frame.Align;
+import bincat.bit.BitAlign;
 import bincat.type.DayRange;
 import bincat.type.Range;
-import varcode.java.code._methods._method;
 import varcode.markup.codeml.code._Method;
 
-public class NetflixFrame
+public class NetflixFrameForm
 {
 
     // elementType to load
     // name[]
     
-    public static methodForm LOAD_FIELD = 
-        methodForm.of( 
-            "public static {+elementType+} load{+$^(name)+}( long row )",
-            "return {+$^(name)+}.load( row );" );
-    
-    public static class LoadField
+    public static class LoadField 
         extends _Method
     {
-        public static class $elementType${}
-        
-        public static class $Name$
-        { 
+        class $elementType$ {};
+        static class $Name${ 
             public static $elementType$ load( long row ) 
-            {
-                return null;
-            }
+            { return null; } 
         }
-        public _method composeWith( Object $elementType$, String $name$ )
-        {
-            return compose( "elementType", $elementType$, "name", $name$ );
-        }
+        
         /*$*/
         public static $elementType$ load$Name$( long row )
         {
@@ -58,29 +45,39 @@ public class NetflixFrame
         return PersonId.load( row );
     }
     
+    /**
+     * This is a MethodForm
+     */
     public static class DescribeRow
         extends _Method
     {
+        private static long mask() { return 1L; }
+        private static int bitCount() { return 1; }
+        public static class $Name$ {
+            public static String describeFrame( long row ) { return ""; }
+        }
+        
         /*$*/
         public static String describeRow( long row )
         {
             StringBuilder sb = new StringBuilder();
-            String frameBits = Align.zeroPadToNBits( row & mask(), bitCount() );
-            frameBits = Align.to64Bit( frameBits, '-' );
+            String frameBits = BitAlign.zeroPadToNBits( row & mask(), bitCount() );
+            frameBits = BitAlign.to64Bit( frameBits, '-' );
             sb.append( frameBits );
-            sb.append( " (" );
+            sb.append( " (");
             sb.append( bitCount() );
             sb.append( " of 64-bits)" );
             sb.append( System.lineSeparator() );
             
-            //now describe each field in the Frame
-            /*{{+:sb.append( {+$^(name)+}.describeFrame( row ) );
+            //describe each Field in the Frame
+            /*{{+:*/sb.append( $Name$.describeFrame( row ) );
             sb.append( System.lineSeparator() );
-            +}}*/
+            /*+}}*/
             return sb.toString();
         }
         /*$*/
-    }
+    }        
+    
     public static methodForm DESCRIBE_ROW = 
         methodForm.of( "public static String describeRow( long row )",
           "StringBuilder sb = new StringBuilder();",
@@ -101,8 +98,8 @@ public class NetflixFrame
     public static String describeRow( long row )
     {
         StringBuilder sb = new StringBuilder();
-        String frameBits = Align.zeroPadToNBits( row & mask(), bitCount() );
-        frameBits = Align.to64Bit( frameBits, '-' );
+        String frameBits = BitAlign.zeroPadToNBits( row & mask(), bitCount() );
+        frameBits = BitAlign.to64Bit( frameBits, '-' );
         sb.append( frameBits );
         sb.append( " (");sb.append( bitCount() );
         sb.append( " of 64-bits)" );
@@ -119,25 +116,8 @@ public class NetflixFrame
         return sb.toString();
     }
 
-    public static class BitCount
-        extends _Method
-    {
-        public _method composeWith( String[] fieldNames )
-        {
-            return compose( "fieldName", fieldNames );
-        }
-        /*$*/
-        public static int bitCount()
-        {
-            int bitCount = 0;
-            /*{{+:bitCount+={+$(^fieldName)+}.bitCount;            
-            }}*/
-            return bitCount;
-        }
-        /*$*/
-    }
     public static final methodForm BITCOUNT = methodForm.of( 
-        "public static int bitCount()",
+        "public static long bitCount()",
         
         "int bitCount = 0;",
         "{{+:bitCount+={+$(^name)+}.bitCount;",
@@ -154,24 +134,6 @@ public class NetflixFrame
         return bitCount;
     }
     
-    public static class Synthesize
-        extends _Method
-    {
-        public _method composeWith( String[] fieldNames )
-        {
-            return compose( "fieldName", fieldNames );
-        }
-         
-        /*$*/
-        public static long synthesize()
-        {
-            long synthesized = 0L;
-            /*{{+:synthesized |= {+$(^fieldName)+}.synthesize();
-            +}}*/
-            return synthesized;
-        }
-        /*$*/
-    }
     public static final methodForm SYNTHESIZE = methodForm.of( 
         "public static long synthesize()",
         
@@ -190,24 +152,6 @@ public class NetflixFrame
         return synthesized;
     }
     
-    public static class Mask
-        extends _Method
-    {
-        public _method composeWith( String[] fieldNames )
-        {
-            return compose( "fieldName", fieldNames );
-        }
-                
-        /*$*/
-        public static long mask()
-        {
-            long mask = 0L;
-            /*{{+:mask |= {+$(^fieldName)+}.bitMask64;
-            +}}*/
-            return mask;
-        }
-        /*$*/
-    }
     public static final methodForm MASK = methodForm.of( 
         "public static long mask()",
         
@@ -225,7 +169,6 @@ public class NetflixFrame
         mask |= Day.bitMask64;
         return mask;
     }
-    
     /**
      * varcode Authored bitField Class
      */
@@ -247,9 +190,9 @@ public class NetflixFrame
         public static String describeFrame( long row )
         {
             long bits = ( row & bitMask64 ) >> shift;
-            String alignedBits = Align.zeroPadToNBits( bits, bitCount );
-            alignedBits = Align.shiftSpaces( alignedBits, shift );
-            alignedBits = Align.to64Bit( alignedBits );
+            String alignedBits = BitAlign.zeroPadToNBits( bits, bitCount );
+            alignedBits = BitAlign.shiftSpaces( alignedBits, shift );
+            alignedBits = BitAlign.to64Bit( alignedBits );
             long bin = extractLongBits( row );
             return alignedBits + " " + name 
                 + "[" + bin + "]->" + type.loadObject( bin );
@@ -259,7 +202,7 @@ public class NetflixFrame
          */
         public static String describeFrame(  )
         {
-            return Align.to64BitMask( bitMask64 ) + " " + name + type;
+            return BitAlign.to64BitMask( bitMask64 ) + " " + name + type;
         }
         public static long store( long value1 )
         {
@@ -299,9 +242,9 @@ public class NetflixFrame
         public static String describeFrame( long row )
         {
             long bits = ( row & bitMask64 ) >> shift;
-            String alignedBits = Align.zeroPadToNBits( bits, bitCount );
-            alignedBits = Align.shiftSpaces( alignedBits, shift );
-            alignedBits = Align.to64Bit( alignedBits );
+            String alignedBits = BitAlign.zeroPadToNBits( bits, bitCount );
+            alignedBits = BitAlign.shiftSpaces( alignedBits, shift );
+            alignedBits = BitAlign.to64Bit( alignedBits );
             long bin = extractLongBits( row );
             return alignedBits + " " + name 
                 + "[" + bin + "]->" + type.loadObject( bin );
@@ -311,7 +254,7 @@ public class NetflixFrame
          */
         public static String describeFrame(  )
         {
-            return Align.to64BitMask( bitMask64 ) + " " + name + type;
+            return BitAlign.to64BitMask( bitMask64 ) + " " + name + type;
         }
         public static long store( long value1 )
         {
@@ -351,9 +294,9 @@ public class NetflixFrame
         public static String describeFrame( long row )
         {
             long bits = ( row & bitMask64 ) >> shift;
-            String alignedBits = Align.zeroPadToNBits( bits, bitCount );
-            alignedBits = Align.shiftSpaces( alignedBits, shift );
-            alignedBits = Align.to64Bit( alignedBits );
+            String alignedBits = BitAlign.zeroPadToNBits( bits, bitCount );
+            alignedBits = BitAlign.shiftSpaces( alignedBits, shift );
+            alignedBits = BitAlign.to64Bit( alignedBits );
             long bin = extractLongBits( row );
             return alignedBits + " " + name 
                 + "[" + bin + "]->" + type.loadObject( bin );
@@ -363,7 +306,7 @@ public class NetflixFrame
          */
         public static String describeFrame(  )
         {
-            return Align.to64BitMask( bitMask64 ) + " " + name + type;
+            return BitAlign.to64BitMask( bitMask64 ) + " " + name + type;
         }
         public static long store( long value1 )
         {
@@ -403,9 +346,9 @@ public class NetflixFrame
         public static String describeFrame( long row )
         {
             long bits = ( row & bitMask64 ) >> shift;
-            String alignedBits = Align.zeroPadToNBits( bits, bitCount );
-            alignedBits = Align.shiftSpaces( alignedBits, shift );
-            alignedBits = Align.to64Bit( alignedBits );
+            String alignedBits = BitAlign.zeroPadToNBits( bits, bitCount );
+            alignedBits = BitAlign.shiftSpaces( alignedBits, shift );
+            alignedBits = BitAlign.to64Bit( alignedBits );
             long bin = extractLongBits( row );
             return alignedBits + " " + name 
                 + "[" + bin + "]->" + type.loadObject( bin );
@@ -415,7 +358,7 @@ public class NetflixFrame
          */
         public static String describeFrame(  )
         {
-            return Align.to64BitMask( bitMask64 ) + " " + name + type;
+            return BitAlign.to64BitMask( bitMask64 ) + " " + name + type;
         }
         public static long store( String value1 )
         {

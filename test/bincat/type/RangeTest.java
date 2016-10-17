@@ -11,7 +11,7 @@ import junit.framework.TestCase;
  *
  * @author M. Eric DeFazio 
  */
-public class IntRangeTest
+public class RangeTest
     extends TestCase
 {
     public void testIntRange()

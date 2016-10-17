@@ -92,6 +92,11 @@ public class DayRange
             (endDate.getTime() - startDate.getTime()) / (double) 86400000 );
     }
  
+    public boolean isValidBin( long bin )
+    {
+        return bin <= days && bin >= 0;
+    }
+    
     public Date load( long bin )
     {
         Calendar c = GregorianCalendar.getInstance();
@@ -109,23 +114,7 @@ public class DayRange
     {
         return (int)daysBetween( this.startDate, dateOf( value ) );
     }
-    /*
-    @Override
-    public int storeInt( Object value )
-    {
-        return store( (Date)value );
-    }
-    */
     
-    
-    /*
-    @Override
-    public Date loadObject( int bin )
-    {
-        return load( bin );
-    }
-    */
-
     @Override
     public int bitCount()
     {
@@ -176,14 +165,6 @@ public class DayRange
     {
         return Synthesize.RANDOM.nextInt( days  + 1 );
     }
-
-    /*
-    @Override
-    public int synthesizeIntBin()
-    {
-        return Synthesize.RANDOM.nextInt( days + 1 );
-    }
-    */
     
     public String formatDate( Date date )
     {

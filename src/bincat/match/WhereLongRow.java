@@ -5,7 +5,7 @@
  */
 package bincat.match;
 
-import bincat.frame.BitField;
+import bincat.bit.BitField;
 import java.util.Arrays;
 import java.util.function.LongFunction;
 
@@ -41,13 +41,13 @@ public enum WhereLongRow
         public MatchEqual( BitField field, Object value )
         {
             this.field = field;
-            targetBin = field.storeLong( value );            
+            targetBin = field.storeObject( value );            
         }
         
         @Override
         public LongFunction<Boolean> fn()
         {
-            return it -> targetBin == ( it & field.bitMask64 );
+            return it -> targetBin == ( it & field.mask );
         }
     }
     
@@ -68,7 +68,7 @@ public enum WhereLongRow
         @Override
         public LongFunction<Boolean> fn()
         {
-            return it -> ( it & field.bitMask64 ) >> field.shift < targetBin;
+            return it -> ( it & field.mask ) >> field.shift < targetBin;
         }
     }
     
@@ -89,7 +89,7 @@ public enum WhereLongRow
         @Override
         public LongFunction<Boolean> fn()
         {
-            return it -> ( it & field.bitMask64 ) >> field.shift <= targetBin;
+            return it -> ( it & field.mask ) >> field.shift <= targetBin;
         }
     }
     
@@ -110,7 +110,7 @@ public enum WhereLongRow
         @Override
         public LongFunction<Boolean> fn()
         {
-            return it -> ( it & field.bitMask64 ) >> field.shift > targetBin;
+            return it -> ( it & field.mask ) >> field.shift > targetBin;
         }
     }
     
@@ -131,7 +131,7 @@ public enum WhereLongRow
         @Override
         public LongFunction<Boolean> fn()
         {
-            return it -> ( it & field.bitMask64 ) >> field.shift >= targetBin;
+            return it -> ( it & field.mask ) >> field.shift >= targetBin;
         }
     }
     
@@ -154,8 +154,8 @@ public enum WhereLongRow
         @Override
         public LongFunction<Boolean> fn()
         {
-            return it -> ( it & field.bitMask64 ) >> field.shift >= minBin
-               && ( it & field.bitMask64 ) >> field.shift <= maxBin;
+            return it -> ( it & field.mask ) >> field.shift >= minBin
+               && ( it & field.mask ) >> field.shift <= maxBin;
         }
     }
     
@@ -173,7 +173,7 @@ public enum WhereLongRow
             targetBins = new long[ values.length ];
             for( int i = 0; i < values.length; i++ ) 
             {
-                targetBins[ i ] = field.storeLong( values[ i ] );
+                targetBins[ i ] = field.storeObject( values[ i ] );
             }
             Arrays.sort(targetBins );
         }
@@ -181,7 +181,7 @@ public enum WhereLongRow
         @Override
         public LongFunction<Boolean> fn()
         {
-            return it -> Arrays.binarySearch( targetBins, it & field.bitMask64 ) >= 0;
+            return it -> Arrays.binarySearch( targetBins, it & field.mask ) >= 0;
         }
     }    
 }

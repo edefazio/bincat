@@ -3,13 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bincat.frame;
+package bincat.bit;
 
 import bincat.Field;
-import bincat.Row;
+import bincat.Record;
 import bincat.type.DayRange;
 import bincat.type.Range;
 import junit.framework.TestCase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import varcode.java.Java;
 import varcode.java.code._class;
 
@@ -20,9 +22,12 @@ import varcode.java.code._class;
 public class BitFrame_AuthorTest
     extends TestCase
 {
+    public static final Logger LOG = 
+        LoggerFactory.getLogger( BitFrame_AuthorTest.class );
+    
     public void testLongFrame_Author()
     {
-         Row Netflix = new Row(
+         Record Netflix = new Record(
             new Field( Range.of( 1, 17770 ), "movieId" ),
             new Field( Range.of( 1, 480196 ), "personId" ),
             new Field( Range.of( 1, 5 ), "rating" ),
@@ -34,7 +39,7 @@ public class BitFrame_AuthorTest
         _class c = BitFrame_Author.of(
             "bitcat.frame.authored", "NetflixPrizeFrame", netflixPrize );
         
-        System.out.println( c );
+        LOG.debug( c.toString() );
         
         Class nfClass = c.loadClass();
         
@@ -42,6 +47,12 @@ public class BitFrame_AuthorTest
             (String) Java.invoke( nfClass, "describeRow", 
                 Java.invoke( nfClass, "synthesize" ) );
         
-        System.out.println( described );
+        LOG.debug( described );
+        
+        long packed = (long)Java.invoke(
+            nfClass, "pack", 17770L, 480196L, 5L, DayRange.dateOf("2008-12-31")
+        );
+        
+        
     }
 }

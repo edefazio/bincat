@@ -1,5 +1,5 @@
 
-package bincat.frame.authored;
+package bincat.bit.authored;
 
 public class UseAuthored
 {

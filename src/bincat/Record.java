@@ -10,12 +10,12 @@ import bincat.type.Range;
 import bincat.type.Type;
 
 /**
- * Grouping of {@code Field}s, a "record" synonymous in concept 
- * with a Row in a database table.
+ * Grouping of {@code Field}s that comprise a composite entity, 
+ * a "record" synonymous in concept with a Row in a database table.
  * 
  * @author M. Eric DeFazio eric@varcode.io
  */
-public class Row
+public class Record
 {
     /** fields in the row (containing {@code Type} and {@code Name}) */
     public Field[] fields;
@@ -34,7 +34,7 @@ public class Row
                 return fields[ i ];
             }
         }
-        throw new RuntimeException( "Frame has no field named \"" + name + "\"" );
+        throw new BinCatException( "Record has no field named \"" + name + "\"" );
     }
     
     public int getFieldIndex( String name )
@@ -46,7 +46,7 @@ public class Row
                 return i;
             }
         }
-        throw new RuntimeException( "No field named \"" + name + "\"" );
+        throw new BinCatException( "No field named \"" + name + "\"" );
     }
     
     public int bitCount()
@@ -67,7 +67,7 @@ public class Row
      * @param parameters fieldName, type pairs
      * @return 
      */
-    public static Row of( Object... parameters )
+    public static Record of( Object... parameters )
     {
         if( parameters.length % 2 == 1)
         {
@@ -80,9 +80,9 @@ public class Row
         {
             fields[ i ] = Field.of( 
                 typeFor( parameters[ i * 2 ] ),
-                (String)parameters[ (i * 2) + 1 ] );                     
+                (String)parameters[ ( i * 2 ) + 1 ] );                     
         }
-        return new Row( fields );
+        return new Record( fields );
     }    
     
     private static Type typeFor( Object obj )
@@ -94,12 +94,13 @@ public class Row
         if( obj instanceof String && ((String)obj).contains( "..." ) )
         {
             String str = (String) obj;
-            int index = str.indexOf("...");
+            int index = str.indexOf( "..." );
             return typeFor( 
                  str.substring( 0 , str.indexOf( "..." ) ),
-                 str.substring( index+3 ) );            
+                 str.substring( index + 3 ) );            
         }
-        throw new BinCatException( "unknown  Type Object \"" + obj + "\"" );
+        throw new BinCatException( 
+            "unknown Type Object \"" + obj + "\"" );
     }
     
     private static Type typeFor( String min, String max )
@@ -110,12 +111,12 @@ public class Row
         }
         else
         {
-            return Range.of( Integer.parseInt(min), Integer.parseInt( max ) );
+            return Range.of( Integer.parseInt( min ), Integer.parseInt( max ) );
         }
         //throw new BinCatException(" could not find type for "+min+"..."+max );
     }
     
-    public Row( Field... fields )
+    public Record( Field... fields )
     {
         this.fields = fields;
     }

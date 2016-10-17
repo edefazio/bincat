@@ -3,11 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bincat.frame;
+package bincat.bit;
 
 import bincat.type.DayRange;
 import bincat.type.Range;
 import junit.framework.TestCase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import varcode.java.Java;
 import varcode.java.code._class;
 
@@ -18,6 +20,8 @@ import varcode.java.code._class;
 public class BitField_AuthorTest
     extends TestCase
 {
+    public static final Logger LOG = 
+        LoggerFactory.getLogger( BitField_AuthorTest.class );
     
     public void testNF()
     {
@@ -33,14 +37,14 @@ public class BitField_AuthorTest
         _class day = BitField_Author.of( lf.getFieldAt( 3 ) );
         
         //load MovieId
-        System.out.println( movieId );
+        LOG.debug( movieId.toString() );
         
         Class movieIdClass = movieId.loadClass();
         assertEquals( "MovieId", movieIdClass.getSimpleName() );
         String describedFrame = (String)
             Java.invoke( movieIdClass, "describeFrame",  Java.invoke( movieIdClass, "synthesize") );
         
-        System.out.println( describedFrame );
+        LOG.debug( describedFrame );
         /*
         System.out.println( movieId );
         System.out.println( rating );
@@ -54,11 +58,11 @@ public class BitField_AuthorTest
         BitField bf = BitField.of(Range.of( 0, 100 ), "count" );
         _class c = BitField_Author.of( bf );
         
-        System.out.println( c );
+        LOG.debug( c.toString() );
         
         Object instance = c.instance( );
         
-        System.out.println( Java.invoke( instance.getClass(), "describeFrame", 100L ) );
+        LOG.debug( Java.invoke( instance.getClass(), "describeFrame", 100L ).toString() );
         
         //I can modify the class to make it static 
         //c.getSignature().getModifiers().set( "static" );
@@ -72,9 +76,9 @@ public class BitField_AuthorTest
         instance = drbf.instance( );
         
         //System.out.println( drbf );
-        System.out.println( instance );
+        LOG.debug( instance.toString() );
         long store = (long)Java.invoke( instance, "store", "12-31-1980" );        
-        System.out.println( Java.invoke( instance, "describeFrame", store ) );
+        LOG.debug( Java.invoke( instance, "describeFrame", store ).toString() );
         
         /*
         System.out.println( 

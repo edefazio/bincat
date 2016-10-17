@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bincat.frame.authored;
+package bincat.bit.authored;
 
 import java.util.Set;
 import varcode.context.VarContext;

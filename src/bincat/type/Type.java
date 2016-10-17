@@ -23,7 +23,11 @@ public interface Type
     
     public Object loadObject( long bin );
     
+    
     public long synthesizeBin();
+    
+    /** is the [Bin] valid for this Type instance */
+    public boolean isValidBin( long bin );
     
     /** 
      * Each instance knows how to describe in Java source code 

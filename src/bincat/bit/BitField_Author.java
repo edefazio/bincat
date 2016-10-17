@@ -1,4 +1,4 @@
-package bincat.frame;
+package bincat.bit;
 
 import bincat.BinCatException;
 import bincat.type.Type;
@@ -35,7 +35,7 @@ public class BitField_Author
         
         c.javadoc( "varcode authored bitField for " );
         c.imports( typeClass );
-        c.imports( Align.class );
+        c.imports( BitAlign.class );
         
         c.field( "public static final String name = \""+ bitField.field.getName() + "\";" );
         c.field( "public static final int bitCount = "+ bitField.bitCount() + ";" );
@@ -46,14 +46,14 @@ public class BitField_Author
         
         c.field( "64-bit (long) bitmask for the field bits",
             "public static final long bitMask64 = 0b" 
-                + Align.to64Bit( bitField.bitMask64, '0' ) + "L;" );
+                + BitAlign.to64Bit(bitField.mask, '0' ) + "L;" );
         
         c.method( DESCRIBE_FRAME_ROW.compose( ) );
         c.method( DESCRIBE_FRAME.compose( ) );
         c.method( TO_STRING.compose( ) );
         c.method( EXTRACT_LONG_BITS.compose( ) );
         c.method( SYNTHESIZE.compose( ) );
-        c.imports( Align.class );
+        c.imports( BitAlign.class );
         
         //c = buildStoreMethods( c, typeClass );
         c = authorStoreMethods( c, typeClass );
@@ -232,9 +232,9 @@ public class BitField_Author
         public static String describeFrame( long row )
         {
             long bits = ( row & bitMask64 ) >>> shift;
-            String alignedBits = Align.zeroPadToNBits( bits, bitCount );
-            alignedBits = Align.shiftSpaces( alignedBits, shift );
-            alignedBits = Align.to64Bit( alignedBits );
+            String alignedBits = BitAlign.zeroPadToNBits( bits, bitCount );
+            alignedBits = BitAlign.shiftSpaces( alignedBits, shift );
+            alignedBits = BitAlign.to64Bit( alignedBits );
             long bin = extractLongBits( row );
             return alignedBits + " " + name 
                 + "[" + bin + "]->" + type.loadObject( bin );
@@ -252,7 +252,7 @@ public class BitField_Author
         /*$*/
         public static String describeFrame()
         {
-            return Align.to64BitMask( bitMask64 ) + " " + name + type;
+            return BitAlign.to64BitMask( bitMask64 ) + " " + name + type;
         }
         /*$*/
     }
